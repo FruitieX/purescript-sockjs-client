@@ -9,3 +9,13 @@ yarn add sockjs-client
 
 ## Example usage
 See [example/ directory](https://github.com/FruitieX/purescript-sockjs-client/tree/master/example)
+
+Build example with:
+
+```
+bower install
+yarn add sockjs-client
+pulp browserify --include example -O --to example/bundle.js
+```
+
+then serve up the example/ directory with any HTTP server.

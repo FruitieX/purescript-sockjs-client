@@ -1,4 +1,3 @@
-/* global exports */
 "use strict";
 
 const SockJS = require('sockjs-client');
