@@ -1,3 +1,4 @@
+/* global exports */
 "use strict";
 
 const SockJS = require('sockjs-client');
@@ -12,7 +13,9 @@ exports.onOpen_ = function(sock, handler) {
   sock.onopen = handler;
 }
 exports.onMessage_ = function(sock, handler) {
-  sock.onmessage = handler;
+  sock.onmessage = function(e) {
+    handler(e.data);
+  };
 }
 exports.onClose_ = function(sock, handler) {
   sock.onclose = handler;
