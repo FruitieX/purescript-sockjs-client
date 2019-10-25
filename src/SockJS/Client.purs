@@ -1,9 +1,9 @@
 module SockJS.Client where
 
-import Prelude
+import Prelude (Unit, ($))
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Uncurried (EffFn1, EffFn2, mkEffFn1, runEffFn1, runEffFn2)
+import Effect
+import Effect.Uncurried (EffectFn1, EffectFn2, mkEffectFn1, runEffectFn1, runEffectFn2)
 
 
 -- | SockJS connection object
@@ -17,95 +17,83 @@ type Url = String
 type Message = String
 
 foreign import connect_
-  :: forall e
-   . EffFn1 e
+  :: EffectFn1
        Url
        Connection
 
 -- Event handlers
 foreign import onOpen_
-  :: forall e
-   . EffFn2 e
+  :: EffectFn2
        Connection
-       (Eff e Unit)
+       (Effect Unit)
        Unit
 
 foreign import onMessage_
-  :: forall e
-   . EffFn2 e
+  :: EffectFn2
        Connection
-       (EffFn1 e Message Unit)
+       (EffectFn1 Message Unit)
        Unit
 
 foreign import onClose_
-  :: forall e
-   . EffFn2 e
+  :: EffectFn2
        Connection
-       (Eff e Unit)
+       (Effect Unit)
        Unit
 
 -- Connection methods
 foreign import send_
-  :: forall e
-   . EffFn2 e
+  :: EffectFn2
        Connection
        Message
        Unit
 
 foreign import close_
-  :: forall e
-   . EffFn1 e
+  :: EffectFn1
        Connection
        Unit
 
 -- Establish a connection with the SockJS server
 connect
-  :: forall e
-   . Url
-  -> Eff e Connection
+  :: Url
+  -> Effect Connection
 connect url =
-  runEffFn1 connect_ url
+  runEffectFn1 connect_ url
 
 -- | Attaches an onopen event handler to a Connection
 onOpen
-  :: forall e
-   . Connection
-  -> Eff e Unit
-  -> Eff e Unit
+  :: Connection
+  -> Effect Unit
+  -> Effect Unit
 onOpen sock callback =
-  runEffFn2 onOpen_ sock callback
+  runEffectFn2 onOpen_ sock callback
 
 -- | Attaches an onmessage event handler to a Connection
 onMessage
-  :: forall e
-   . Connection
-  -> (Message -> Eff e Unit)
-  -> Eff e Unit
+  :: Connection
+  -> (Message -> Effect Unit)
+  -> Effect Unit
 onMessage sock callback =
-  runEffFn2 onMessage_ sock $ mkEffFn1 callback
+  runEffectFn2 onMessage_ sock $ mkEffectFn1 callback
 
 -- | Attaches an onclose event handler to a Connection
 onClose
-  :: forall e
-   . Connection
-  -> Eff e Unit
-  -> Eff e Unit
+  :: Connection
+  -> Effect Unit
+  -> Effect Unit
 onClose sock callback =
-  runEffFn2 onClose_ sock callback
+  runEffectFn2 onClose_ sock callback
 
 -- | Send a message over a Connection
 send
-  :: forall e
-   . Connection
+  :: Connection
   -> Message
-  -> Eff e Unit
+  -> Effect Unit
 send sock message =
-  runEffFn2 send_ sock message
+  runEffectFn2 send_ sock message
 
 -- | Close a Connection
 close
-  :: forall e
-   . Connection
-  -> Eff e Unit
+  :: Connection
+  -> Effect Unit
 close sock =
-  runEffFn1 close_ sock
+  runEffectFn1 close_ sock
